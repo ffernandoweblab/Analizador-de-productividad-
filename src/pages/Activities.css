@@ -1,0 +1,676 @@
+.activities-page {
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.activities-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.activities-header h2 {
+  font-size: 2rem;
+  color: #1a202c;
+  margin: 0 0 0.25rem 0;
+}
+
+.activities-subtitle {
+  color: #718096;
+  margin: 0;
+  font-size: 1rem;
+  text-transform: capitalize;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+/* Layout */
+.activities-layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 2rem;
+}
+
+/* Sidebar */
+.activities-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.calendar-container {
+  background: white;
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos del calendario react-calendar */
+.react-calendar {
+  width: 100%;
+  border: none;
+  font-family: inherit;
+}
+
+.react-calendar__tile--active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.react-calendar__tile--now {
+  background: #fef3c7;
+}
+
+.react-calendar__tile:hover {
+  background: #f3f4f6;
+}
+
+.quick-stats {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.quick-stats h3 {
+  font-size: 1.1rem;
+  color: #2d3748;
+  margin: 0 0 1rem 0;
+}
+
+.stat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.stat-item:last-child {
+  border-bottom: none;
+}
+
+.stat-label {
+  color: #718096;
+  font-size: 0.9rem;
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #667eea;
+}
+
+/* Main content */
+.activities-main {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.activities-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.filter-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.filter-btn {
+  background: transparent;
+  border: 2px solid #e2e8f0;
+  color: #4a5568;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.filter-btn:hover {
+  border-color: #cbd5e0;
+  background: #f7fafc;
+}
+
+.filter-btn.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-color: transparent;
+}
+
+.view-toggle {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.view-btn {
+  background: #f7fafc;
+  border: 2px solid #e2e8f0;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.view-btn:hover {
+  background: #edf2f7;
+}
+
+.view-btn.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-color: transparent;
+}
+
+/* Lista de actividades */
+.activities-list-view {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.empty-state {
+  background: white;
+  padding: 3rem;
+  border-radius: 12px;
+  text-align: center;
+  color: #718096;
+}
+
+.activity-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.activity-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.activity-indicator {
+  width: 6px;
+  flex-shrink: 0;
+}
+
+.activity-card-content {
+  padding: 1.5rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.activity-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.activity-card-title {
+  font-size: 1.25rem;
+  color: #2d3748;
+  margin: 0 0 0.5rem 0;
+}
+
+.activity-card-description {
+  color: #718096;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.activity-card-badges {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.priority-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 6px;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.status-cumplida {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.status-pendiente {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status-retrasada {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.status-en.riesgo {
+  background: #fed7aa;
+  color: #9a3412;
+}
+
+.activity-card-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: #4a5568;
+}
+
+.detail-icon {
+  font-size: 1rem;
+}
+
+.activity-card-actions {
+  display: flex;
+  gap: 0.75rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.action-btn {
+  background: transparent;
+  border: 1px solid #cbd5e0;
+  color: #4a5568;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.action-btn:hover {
+  background: #f7fafc;
+  border-color: #a0aec0;
+}
+
+.action-btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+}
+
+.action-btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+/* Vista de Timeline */
+.activities-timeline-view {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+}
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+}
+
+.timeline-hour {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  min-height: 60px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.timeline-hour:last-child {
+  border-bottom: none;
+}
+
+.timeline-hour-label {
+  padding: 0.5rem;
+  color: #718096;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.timeline-hour-content {
+  position: relative;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.timeline-activity {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  min-height: 40px;
+}
+
+.timeline-activity-title {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.timeline-activity-time {
+  font-size: 0.75rem;
+  opacity: 0.9;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .activities-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .activities-sidebar {
+    display: none;
+  }
+}
+
+
+
+
+
+/* Animaciones */
+/* Adaptación al tema oscuro */
+.dashboard,
+.team-view,
+.activities-page,
+.reports-page,
+.calendar-view {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* Títulos y subtítulos */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-primary);
+}
+
+p, span {
+  color: var(--text-secondary);
+}
+
+/* Tarjetas y contenedores */
+.stat-card,
+.metric-card,
+.employee-card,
+.activity-card,
+.chart-container,
+.productivity-summary,
+.patterns-section,
+.activities-section,
+.executive-summary,
+.insights-section,
+.calendar-grid-container,
+.sidebar-section,
+.team-table-container,
+.detail-metric {
+  background: var(--card-bg) !important;
+  border-color: var(--card-border) !important;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+.stat-card:hover,
+.metric-card:hover,
+.employee-card:hover,
+.activity-card:hover {
+  background: var(--card-hover-bg) !important;
+}
+
+/* Inputs y selectores */
+.department-filter,
+.period-selector,
+.filter-btn,
+.btn-today,
+input,
+select,
+textarea {
+  background: var(--input-bg) !important;
+  border-color: var(--input-border) !important;
+  color: var(--text-primary) !important;
+  transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+}
+
+.department-filter:focus,
+.period-selector:focus,
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--input-focus) !important;
+}
+
+/* Tablas */
+.team-table,
+.report-table {
+  background: var(--card-bg);
+  color: var(--text-primary);
+}
+
+.team-table thead,
+.report-table thead {
+  background: var(--bg-tertiary) !important;
+}
+
+.team-table th,
+.report-table th {
+  color: var(--text-secondary) !important;
+  border-bottom-color: var(--border-color) !important;
+}
+
+.team-table tbody tr,
+.report-table tbody tr {
+  border-bottom-color: var(--border-color) !important;
+}
+
+.team-table tbody tr:hover,
+.report-table tbody tr:hover {
+  background: var(--card-hover-bg) !important;
+}
+
+.team-table td,
+.report-table td {
+  color: var(--text-primary) !important;
+}
+
+/* Avatares */
+.employee-avatar,
+.table-avatar,
+.employee-avatar-large {
+  background: var(--avatar-bg) !important;
+  border-color: var(--border-color) !important;
+}
+
+.avatar-placeholder,
+.avatar-placeholder-small,
+.avatar-placeholder-large {
+  background: linear-gradient(180deg, var(--avatar-gradient-start) 0%, var(--avatar-gradient-end) 100%) !important;
+}
+
+/* Botones */
+.toggle-btn,
+.filter-btn,
+.nav-btn,
+.action-btn,
+.action-btn-small,
+.table-action-btn,
+.btn-secondary-modal {
+  background: var(--input-bg) !important;
+  border-color: var(--input-border) !important;
+  color: var(--text-primary) !important;
+}
+
+.toggle-btn:hover,
+.filter-btn:hover,
+.nav-btn:hover,
+.action-btn:hover,
+.action-btn-small:hover,
+.table-action-btn:hover,
+.btn-secondary-modal:hover {
+  background: var(--card-hover-bg) !important;
+}
+
+.toggle-btn.active,
+.filter-btn.active {
+  background: var(--btn-primary) !important;
+  color: white !important;
+  border-color: var(--btn-primary) !important;
+}
+
+/* Modal */
+.modal-content {
+  background: var(--card-bg) !important;
+  color: var(--text-primary) !important;
+  box-shadow: 0 20px 60px var(--shadow-color) !important;
+}
+
+.modal-header {
+  border-bottom-color: var(--border-color) !important;
+}
+
+.modal-footer {
+  border-top-color: var(--border-color) !important;
+}
+
+.modal-close {
+  color: var(--text-tertiary) !important;
+}
+
+.modal-close:hover {
+  background: var(--card-hover-bg) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Calendario */
+.calendar-weekdays,
+.weekday-label {
+  background: var(--bg-tertiary) !important;
+  color: var(--text-secondary) !important;
+}
+
+.calendar-day {
+  background: var(--card-bg) !important;
+  color: var(--text-primary) !important;
+}
+
+.calendar-day:hover {
+  background: var(--card-hover-bg) !important;
+}
+
+.calendar-day.other-month {
+  opacity: 0.4;
+}
+
+.day-activity-item {
+  background: var(--bg-tertiary) !important;
+}
+
+/* Leyenda del calendario */
+.calendar-legend {
+  background: var(--card-bg) !important;
+  border-color: var(--card-border) !important;
+}
+
+.legend-item {
+  color: var(--text-secondary) !important;
+}
+
+/* Gráficas - Recharts se adapta automáticamente pero podemos ajustar tooltips */
+.recharts-tooltip-wrapper {
+  outline: none !important;
+}
+
+.recharts-default-tooltip {
+  background-color: var(--card-bg) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Tendencias y barras de progreso */
+.weekly-trend,
+.daily-breakdown-list,
+.upcoming-day {
+  background: var(--bg-tertiary) !important;
+  border-color: var(--border-color) !important;
+}
+
+/* Labels y textos secundarios */
+.metric-label,
+.stat-label,
+.trend-label,
+.detail-metric-label,
+.employee-position,
+.table-employee-position,
+.activity-card-description,
+.dashboard-date,
+.team-subtitle,
+.activities-subtitle,
+.reports-subtitle,
+.calendar-subtitle,
+.selected-date-text,
+.stat-label,
+.trend-day-label,
+.daily-activities,
+.contact-info {
+  color: var(--text-tertiary) !important;
+}
+
+/* Valores y números importantes */
+.metric-value,
+.stat-value,
+.metric-value-large,
+.detail-metric-value,
+.table-employee-name,
+.activity-card-title,
+.day-number,
+.daily-day,
+.daily-percentage {
+  color: var(--text-primary) !important;
+}

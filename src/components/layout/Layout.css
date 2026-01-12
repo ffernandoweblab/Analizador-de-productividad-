@@ -1,0 +1,19 @@
+.layout {
+  min-height: 100vh;
+  background: var(--bg-primary);
+  transition: background-color 0.3s;
+}
+
+.layout-body {
+  display: flex;
+  padding-top: 70px;
+}
+
+.main-content {
+  margin-left: 250px;
+  padding: 2rem;
+  width: calc(100% - 250px);
+  min-height: calc(100vh - 70px);
+  background: var(--bg-primary);
+  transition: background-color 0.3s;
+}
