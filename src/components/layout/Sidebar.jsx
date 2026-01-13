@@ -5,10 +5,10 @@ function Sidebar({ activeView, setActiveView }) {
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: '📊' },
     { id: 'productividad', label: 'Productividad', icon: '📈' },
-    { id: 'team', label: 'Equipo', icon: '👥' },
-    { id: 'activities', label: 'Actividades', icon: '📋' },
+    // { id: 'team', label: 'Equipo', icon: '👥' },
+    // { id: 'activities', label: 'Actividades', icon: '📋' },
     { id: 'reportes', label: 'Reportes', icon: '📊' },
-    { id: 'calendar', label: 'Calendario', icon: '📅' },
+    // { id: 'calenda r', label: 'Calendario', icon: '📅' },
     { id: 'Productividad', label: 'Informe dia hoy ', icon: '📅' },
   ];
 
