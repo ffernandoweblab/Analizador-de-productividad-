@@ -3,13 +3,13 @@ import './App.css';
 import Layout from './components/layout/Layout';
 import Dashboard from './pages/Dashboard';
 import Activities from './pages/Activities';
-import Reports from './pages/Reports';
+// import Reports from './pages/Reports';
 import Calendar from './pages/CalendarView';
 import TeamView from './pages/TeamView';
 // import DataExplorer from './components/activities/DataExplorer';
 import ProductivityDashboard from './components/activities/ProductivityDashboard';
 import ProductividadDiaria from './pages/ProductividadDiaria';
-
+import ReportesDiarios from './pages/ReportesDiarios';
 
 function App() {
   const [activeView, setActiveView] = useState('Dashboard');
@@ -25,7 +25,7 @@ function App() {
       case 'activities':
         return <Activities />;
       case 'reportes':
-        return <Reports />;
+        return <ReportesDiarios />;
       case 'calendar':
         return <Calendar />;
       case 'Productividad':

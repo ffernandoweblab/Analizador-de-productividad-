@@ -7,7 +7,7 @@ function Sidebar({ activeView, setActiveView }) {
     { id: 'productividad', label: 'Productividad', icon: '📈' },
     { id: 'team', label: 'Equipo', icon: '👥' },
     { id: 'activities', label: 'Actividades', icon: '📋' },
-    { id: 'reports', label: 'Reportes', icon: '📊' },
+    { id: 'reportes', label: 'Reportes', icon: '📊' },
     { id: 'calendar', label: 'Calendario', icon: '📅' },
     { id: 'Productividad', label: 'Informe dia hoy ', icon: '📅' },
   ];
