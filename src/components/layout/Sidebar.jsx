@@ -3,12 +3,14 @@ import './Sidebar.css';
 
 function Sidebar({ activeView, setActiveView }) {
   const menuItems = [
-  { id: 'dashboard', label: 'Dashboard', icon: '📊' },
-  { id: 'team', label: 'Equipo', icon: '👥' },
-  { id: 'activities', label: 'Actividades', icon: '📋' },
-  { id: 'reports', label: 'Reportes', icon: '📈' },
-  { id: 'calendar', label: 'Calendario', icon: '📅' },
-];
+    { id: 'dashboard', label: 'Dashboard', icon: '📊' },
+    { id: 'productividad', label: 'Productividad', icon: '📈' },
+    { id: 'team', label: 'Equipo', icon: '👥' },
+    { id: 'activities', label: 'Actividades', icon: '📋' },
+    { id: 'reports', label: 'Reportes', icon: '📊' },
+    { id: 'calendar', label: 'Calendario', icon: '📅' },
+    { id: 'Productividad', label: 'Informe dia hoy ', icon: '📅' },
+  ];
 
   return (
     <aside className="sidebar">
