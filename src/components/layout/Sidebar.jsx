@@ -10,6 +10,8 @@ function Sidebar({ activeView, setActiveView }) {
     { id: 'reportes', label: 'Reportes', icon: '📊' },
     // { id: 'calenda r', label: 'Calendario', icon: '📅' },
     { id: 'Productividad', label: 'Informe dia hoy ', icon: '📅' },
+
+    { id: 'predicciondiaria', label: 'Prediccion', icon: '📅' },
   ];
 
   return (

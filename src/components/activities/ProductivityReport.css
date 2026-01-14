@@ -1,0 +1,213 @@
+/* src/components/ProductivityReport.css */
+
+.productivity-report {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.report-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.report-header h1 {
+  font-size: 1.8rem;
+  color: #1f2937;
+  margin-bottom: 8px;
+}
+
+.report-header .subtitle {
+  color: #6b7280;
+  font-size: 1rem;
+}
+
+/* Grid de tarjetas */
+.report-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+/* Tarjeta de colaborador */
+.colaborador-card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid #ccc;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.colaborador-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  cursor: pointer;
+  background: #f9fafb;
+}
+
+.header-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-info .emoji {
+  font-size: 1.5rem;
+}
+
+.header-info h3 {
+  margin: 0;
+  font-size: 1rem;
+  color: #1f2937;
+}
+
+.score-badge {
+  color: white;
+  font-weight: bold;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+}
+
+.card-body {
+  padding: 16px;
+}
+
+.nivel {
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin: 0 0 4px 0;
+  color: #374151;
+}
+
+.recomendacion {
+  color: #6b7280;
+  font-size: 0.85rem;
+  margin: 0 0 16px 0;
+}
+
+/* Métricas resumen */
+.metricas-resumen {
+  display: flex;
+  justify-content: space-around;
+  background: #f3f4f6;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.metrica {
+  text-align: center;
+}
+
+.metrica .valor {
+  display: block;
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #1f2937;
+}
+
+.metrica .label {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+/* Tendencia */
+.tendencia {
+  text-align: center;
+  padding: 8px;
+  background: #f9fafb;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+/* Detalles expandibles */
+.card-details {
+  padding: 16px;
+  background: #f9fafb;
+  border-top: 1px solid #e5e7eb;
+}
+
+.card-details h4 {
+  margin: 0 0 12px 0;
+  font-size: 0.9rem;
+  color: #374151;
+}
+
+.tarea-arrastre {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px;
+  background: #fff;
+  border-radius: 6px;
+  margin-bottom: 6px;
+  font-size: 0.85rem;
+}
+
+.tarea-nombre {
+  color: #4b5563;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-right: 10px;
+}
+
+.dias-arrastre {
+  color: #ef4444;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.sin-arrastre {
+  color: #22c55e;
+  text-align: center;
+  padding: 8px;
+}
+
+/* Loading y Error */
+.loading-container,
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #e5e7eb;
+  border-top-color: #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.error-container button {
+  margin-top: 16px;
+  padding: 10px 20px;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  color: #6b7280;
+}

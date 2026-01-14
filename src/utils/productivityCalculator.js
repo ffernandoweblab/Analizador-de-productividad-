@@ -145,3 +145,9 @@ export const identifyPatterns = (activities) => {
   
   return patterns;
 };
+
+
+
+
+
+
