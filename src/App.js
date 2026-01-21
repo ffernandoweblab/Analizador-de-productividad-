@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './App.css';
 import Layout from './components/layout/Layout';
 import Dashboard from './pages/Dashboard';
+
 // import Activities from './pages/Activities';
 // import Reports from './pages/Reports';
 // import Calendar from './pages/CalendarView';
@@ -13,6 +14,7 @@ import Dashboard from './pages/Dashboard';
 import ProductivityDashboard from './components/activities/ProductivityDashboard';
 import ProductividadDiaria from './pages/ProductividadDiaria';
 import ReportesDiarios from './pages/ReportesDiarios';
+import ProductividadPredictor from "./components/Productividad/ProductividadPredictor"
 // //22
 // import ProductivityReport from './components/activities/ProductivityReport';
 import PrediccionProductividad from './pages/PrediccionProductividad';
@@ -28,6 +30,11 @@ function App() {
 
         case 'predicciondiaria':
         return <PrediccionProductividad />;
+
+        
+        case "predicciondiaria1":
+        return <ProductividadPredictor />;
+
         
 
         
@@ -64,6 +71,7 @@ function App() {
       {renderView()}
     </Layout>
   );
+  
 }
 
 export default App;

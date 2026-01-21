@@ -12,6 +12,7 @@ function Sidebar({ activeView, setActiveView }) {
     { id: 'Productividad', label: 'Informe dia hoy ', icon: '📅' },
 
     { id: 'predicciondiaria', label: 'Prediccion', icon: '📅' },
+    { id: "predicciondiaria1", label: "Predicción", icon: "🤖" },
   ];
 
   return (
