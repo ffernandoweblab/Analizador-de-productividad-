@@ -17,7 +17,18 @@ import ReportesDiarios from './pages/ReportesDiarios';
 import ProductividadPredictor from "./components/Productividad/ProductividadPredictor"
 // //22
 // import ProductivityReport from './components/activities/ProductivityReport';
-import PrediccionProductividad from './pages/PrediccionProductividad';
+
+//jesus
+// import PrediccionProductividad from './pages/PrediccionProductividad';
+
+
+// import ProductividadHoy from './components/Productividad/ProductividadHoy';
+
+
+// import Croductividadfer from './components/Productividad/Croductividadfer';
+
+
+import ProductividadCards from './services/Productividad';
 function App() {
   const [activeView, setActiveView] = useState('Dashboard');
 
@@ -28,8 +39,8 @@ function App() {
 
 
 
-        case 'predicciondiaria':
-        return <PrediccionProductividad />;
+        case 'prediccionhoy':
+        return <ProductividadCards />;
 
         
         case "predicciondiaria1":

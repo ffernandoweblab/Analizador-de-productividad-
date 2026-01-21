@@ -13,6 +13,7 @@ function Sidebar({ activeView, setActiveView }) {
 
     { id: 'predicciondiaria', label: 'Prediccion', icon: '📅' },
     { id: "predicciondiaria1", label: "Predicción", icon: "🤖" },
+    { id: "prediccionhoy", label: "Predicciónhoyfer", icon: "🤖" },
   ];
 
   return (

@@ -1,0 +1,257 @@
+/* src/components/Productividad/ProductividadCards.css */
+
+.productividad-container {
+  width: 100%;
+  padding: 20px;
+}
+
+.productividad-header {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.productividad-header h2 {
+  margin: 0;
+  font-size: 1.8rem;
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.productividad-header button {
+  padding: 10px 20px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.productividad-header button:hover:not(:disabled) {
+  background-color: #2980b9;
+  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+}
+
+.productividad-header button:disabled {
+  background-color: #bdc3c7;
+  cursor: not-allowed;
+}
+
+.productividad-grid {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.productividad-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  border-left: 5px solid #3498db;
+  position: relative;
+}
+
+/* Colores de borde según predicción */
+.productividad-card.productivo {
+  border-left-color: #27ae60;
+}
+
+.productividad-card.regular {
+  border-left-color: #f39c12;
+}
+
+.productividad-card.no-productivo {
+  border-left-color: #e74c3c;
+}
+
+.productividad-card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  transform: translateY(-4px);
+}
+
+.productividad-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.productividad-card h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.productividad-card small {
+  display: block;
+  color: #7f8c8d;
+  font-size: 0.85rem;
+  margin-top: 2px;
+}
+
+.productividad-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.productividad-badge.productivo {
+  background-color: #d5f4e6;
+  color: #27ae60;
+}
+
+.productividad-badge.regular {
+  background-color: #fdebd0;
+  color: #f39c12;
+}
+
+.productividad-badge.no-productivo {
+  background-color: #fadbd8;
+  color: #e74c3c;
+}
+
+.productividad-card-description {
+  color: #95a5a6;
+  font-size: 0.9rem;
+  font-style: italic;
+  margin: 10px 0 15px 0;
+  line-height: 1.4;
+}
+
+.productividad-card-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin: 20px 0;
+  padding: 15px 0;
+  border-top: 1px solid #ecf0f1;
+  border-bottom: 1px solid #ecf0f1;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  color: #7f8c8d;
+  font-size: 0.8rem;
+  margin-bottom: 6px;
+  min-height: 20px;
+}
+
+.stat-label svg {
+  width: 16px;
+  height: 16px;
+}
+
+.stat-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #3498db;
+}
+
+.stat-unit {
+  font-size: 0.75rem;
+  color: #7f8c8d;
+  display: block;
+  margin-top: 2px;
+}
+
+.productividad-card-progress {
+  margin-top: 15px;
+}
+
+.progress-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.progress-label {
+  min-width: 110px;
+  font-size: 0.85rem;
+  color: #2c3e50;
+  font-weight: 500;
+}
+
+.progress-bar-container {
+  flex: 1;
+  height: 8px;
+  background-color: #ecf0f1;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  border-radius: 10px;
+  transition: width 0.3s ease;
+}
+
+.progress-bar.productivo {
+  background-color: #27ae60;
+}
+
+.progress-bar.regular {
+  background-color: #f39c12;
+}
+
+.progress-bar.no-productivo {
+  background-color: #e74c3c;
+}
+
+.progress-percentage {
+  font-size: 0.8rem;
+  color: #7f8c8d;
+  min-width: 35px;
+  text-align: right;
+  font-weight: 600;
+}
+
+.error-message {
+  color: #e74c3c;
+  font-size: 1rem;
+  padding: 12px;
+  background-color: #fadbd8;
+  border-radius: 6px;
+  border-left: 4px solid #e74c3c;
+}
+
+.loading-message {
+  color: #7f8c8d;
+  font-size: 1rem;
+  padding: 12px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .productividad-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .productividad-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .productividad-card-stats {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

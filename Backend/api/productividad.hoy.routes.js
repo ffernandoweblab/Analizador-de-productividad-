@@ -148,7 +148,7 @@ function procesarColaboradorDia(col, day) {
 }
 
 async function predecirConModelo(features) {
-  const mlBase = process.env.ML_API_BASE || "http://127.0.0.1:8001";
+  const mlBase = process.env.ML_API_BASE || "http://127.0.0.1:8000";
   const url = `${mlBase}/predict`;
   const { data } = await axios.post(url, {
     actividades: features.actividades,
@@ -158,11 +158,66 @@ async function predecirConModelo(features) {
   return data;
 }
 
+// router.get("/hoy", async (req, res) => {
+//   try {
+//     const day = String(req.query.date || "").trim() || getTodayISOInTZ(TZ);
+
+//     const colaboradores = await fetchColaboradores(day);
+
+//     const rows = colaboradores
+//       .map((c) => procesarColaboradorDia(c, day))
+//       .filter(Boolean);
+
+//     // Predicción por usuario (paralelo)
+//     const users = await Promise.all(
+//       rows.map(async (r) => ({
+//         ...r,
+//         prediccion: await predecirConModelo(r),
+//       }))
+//     );
+
+//     // Ordena por minutos desc (opcional)
+//     users.sort((a, b) => (b.tiempo_total || 0) - (a.tiempo_total || 0));
+
+//     return res.json({ date: day, users });
+//   } catch (err) {
+//     const msg = err?.message || String(err);
+//     return res.status(500).json({ error: msg });
+//   }
+// });
+
+
+// ---- FILTRO DE USUARIOS (exclusión) ----
+const EXCLUDE_DOMAINS = new Set(["officlean.com", "aluvri.com"]);
+const EXCLUDE_USER_IDS = new Set(["2dad872b594c81c8ae6500026864f907"]);
+
 router.get("/hoy", async (req, res) => {
   try {
     const day = String(req.query.date || "").trim() || getTodayISOInTZ(TZ);
 
-    const colaboradores = await fetchColaboradores(day);
+    let colaboradores = await fetchColaboradores(day);
+
+    // ---- APLICAR FILTRO DE EXCLUSIÓN ----
+    colaboradores = colaboradores.filter((col) => {
+      const userId = col?.idAsignee;
+
+      // Excluir por ID
+      if (EXCLUDE_USER_IDS.has(userId)) {
+        console.log(`[FILTRO] Excluyendo usuario por ID: ${userId}`);
+        return false;
+      }
+
+      // Excluir por dominio de email
+      if (col?.email) {
+        const domain = col.email.split("@")[1];
+        if (EXCLUDE_DOMAINS.has(domain)) {
+          console.log(`[FILTRO] Excluyendo usuario por dominio: ${domain}`);
+          return false;
+        }
+      }
+
+      return true;
+    });
 
     const rows = colaboradores
       .map((c) => procesarColaboradorDia(c, day))
@@ -185,5 +240,8 @@ router.get("/hoy", async (req, res) => {
     return res.status(500).json({ error: msg });
   }
 });
+
+
+
 
 module.exports = router;
