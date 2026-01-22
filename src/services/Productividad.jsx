@@ -95,8 +95,9 @@ export default function ProductividadCards() {
                   </div>
                   <div>
                     <h3>{u.colaborador}</h3>
-                    <small>{u.user_id}</small>
+                    
                   </div>
+                  
                 </div>
                 <span className={`productividad-badge ${prediccion}`}>
                   {prettyLabel(prediccion)}
