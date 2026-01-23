@@ -29,48 +29,58 @@ import ReportesDiarios from './pages/ReportesDiarios';
 
 
 import ProductividadCards from './services/Productividad';
+import HistoricoProductividad from './services/HistoricoProductividad';
+import Prueba from './services/Prueba';
 function App() {
   const [activeView, setActiveView] = useState('Dashboard');
 
-  const renderView = () => {  
+  const renderView = () => {
     switch (activeView) {
       case 'dashboard':
         return <Dashboard />;
 
 
 
-        case 'prediccionhoy':
+      case 'pruebadefecha':
+        return <Prueba />;
+
+
+      case 'prediccionhoy':
         return <ProductividadCards />;
 
-        
-        // case "predicciondiaria1":
-        // return <ProductividadPredictor />;
 
-        
+      case 'rodrigo':
+        return <HistoricoProductividad />;
 
-        
+
+      // case "predicciondiaria1":
+      // return <ProductividadPredictor />;
+
+
+
+
       // case 'productividad':
       //   //https://wlserver-production.up.railway.app/api/actividades
       //   //
       //   return <ProductivityDashboard />;
-           
+
       // case 'team':
       //   return <TeamView />;
       // case 'activities':
       //   return <Activities />;
-  // //2
+      // //2
       case 'reportes':
         //proporciona cuantas actv se realizaron al dia cuantas se terminaron y revisiones
         //https://wlserver-production.up.railway.app/api/reportes/custom?start=${start}&end=${end}
         return <ReportesDiarios />;
-  //       //2
+      //       //2
       // case 'calendar':
       //   return <Calendar />;
       //3
       // case 'Productividad':
-        //productividad del dia sobre que realizo cada uno 
-        //https://wlserver-production.up.railway.app/api/reportes/resumen?period=dia
-        // return <ProductividadDiaria/>;
+      //productividad del dia sobre que realizo cada uno 
+      //https://wlserver-production.up.railway.app/api/reportes/resumen?period=dia
+      // return <ProductividadDiaria/>;
       //   //3
       default:
         return <Dashboard />;
@@ -82,7 +92,7 @@ function App() {
       {renderView()}
     </Layout>
   );
-  
+
 }
 
 export default App;

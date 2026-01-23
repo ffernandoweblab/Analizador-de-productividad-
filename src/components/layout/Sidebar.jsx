@@ -14,6 +14,8 @@ function Sidebar({ activeView, setActiveView }) {
     // { id: 'pred  icciondiaria', label: 'Prediccion', icon: '📅' },
     // { id: "predicciondiaria1", label: "Predicción", icon: "🤖" },
     { id: "prediccionhoy", label: "Informe de hoy", icon: "🤖" },
+    { id: "rodrigo", label: "Historico Productividad", icon: "🤖" },
+    { id: "pruebadefecha", label: "prueba de fecha", icon: "🤖" },
   ];
 
   return (
