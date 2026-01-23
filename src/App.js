@@ -11,10 +11,10 @@ import Dashboard from './pages/Dashboard';
 
 
 // //22
-import ProductivityDashboard from './components/activities/ProductivityDashboard';
-import ProductividadDiaria from './pages/ProductividadDiaria';
+// import ProductivityDashboard from './components/activities/ProductivityDashboard';
+// import ProductividadDiaria from './pages/ProductividadDiaria';
 import ReportesDiarios from './pages/ReportesDiarios';
-import ProductividadPredictor from "./components/Productividad/ProductividadPredictor"
+// import ProductividadPredictor from "./components/Productividad/ProductividadPredictor"
 // //22
 // import ProductivityReport from './components/activities/ProductivityReport';
 
@@ -43,16 +43,16 @@ function App() {
         return <ProductividadCards />;
 
         
-        case "predicciondiaria1":
-        return <ProductividadPredictor />;
+        // case "predicciondiaria1":
+        // return <ProductividadPredictor />;
 
         
 
         
-      case 'productividad':
-        //https://wlserver-production.up.railway.app/api/actividades
-        //
-        return <ProductivityDashboard />;
+      // case 'productividad':
+      //   //https://wlserver-production.up.railway.app/api/actividades
+      //   //
+      //   return <ProductivityDashboard />;
            
       // case 'team':
       //   return <TeamView />;
@@ -67,10 +67,10 @@ function App() {
       // case 'calendar':
       //   return <Calendar />;
       //3
-      case 'Productividad':
+      // case 'Productividad':
         //productividad del dia sobre que realizo cada uno 
         //https://wlserver-production.up.railway.app/api/reportes/resumen?period=dia
-        return <ProductividadDiaria/>;
+        // return <ProductividadDiaria/>;
       //   //3
       default:
         return <Dashboard />;

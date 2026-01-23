@@ -464,6 +464,8 @@ async function predecirConModelo(features) {
 // ---- FILTRO DE USUARIOS (exclusión) ----
 const EXCLUDE_DOMAINS = new Set(["officlean.com", "aluvri.com"]);
 const EXCLUDE_USER_IDS = new Set(["2dad872b594c81c8ae6500026864f907"]);
+const EXCLUDE_USER_IDS2 = new Set(["2e6d872b594c8100ac680002df5d84c5"]);
+const EXCLUDE_USER_IDS3 = new Set(["2edd872b594c818984190002be5174f1"]);
 
 router.get("/hoy", async (req, res) => {
   try {
@@ -480,6 +482,14 @@ router.get("/hoy", async (req, res) => {
       const userId = col?.idAsignee;
 
       if (EXCLUDE_USER_IDS.has(userId)) {
+        console.log(`[FILTRO] Excluyendo usuario por ID: ${userId}`);
+        return false;
+      }
+      if (EXCLUDE_USER_IDS2.has(userId)) {
+        console.log(`[FILTRO] Excluyendo usuario por ID: ${userId}`);
+        return false;
+      }
+      if (EXCLUDE_USER_IDS3.has(userId)) {
         console.log(`[FILTRO] Excluyendo usuario por ID: ${userId}`);
         return false;
       }

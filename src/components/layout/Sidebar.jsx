@@ -9,11 +9,11 @@ function Sidebar({ activeView, setActiveView }) {
     // { id: 'activities', label: 'Actividades', icon: '📋' },
     { id: 'reportes', label: 'Reportes', icon: '📊' },
     // { id: 'calenda r', label: 'Calendario', icon: '📅' },
-    { id: 'Productividad', label: 'Informe dia hoy ', icon: '📅' },
+    // { id: 'Productividad', label: 'Informe dia hoy ', icon: '📅' },
 
-    { id: 'predicciondiaria', label: 'Prediccion', icon: '📅' },
-    { id: "predicciondiaria1", label: "Predicción", icon: "🤖" },
-    { id: "prediccionhoy", label: "Predicciónhoyfer", icon: "🤖" },
+    // { id: 'pred  icciondiaria', label: 'Prediccion', icon: '📅' },
+    // { id: "predicciondiaria1", label: "Predicción", icon: "🤖" },
+    { id: "prediccionhoy", label: "Informe de hoy", icon: "🤖" },
   ];
 
   return (

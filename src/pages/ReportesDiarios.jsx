@@ -1,280 +1,361 @@
-import React, { useState, useEffect } from 'react';
+'use client';
+
+import React, { useCallback, useEffect, useState } from "react";
+import {
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  RadarChart,
+  PolarGrid,
+  PolarAngleAxis,
+  PolarRadiusAxis,
+  Radar,
+} from "recharts";
 import './ReportesDiarios.css';
 
-function ReportesDiarios() {
+const COLORS = {
+  productivo: "#10b981",
+  regular: "#f59e0b",
+  no_productivo: "#ef4444",
+};
+
+function formatearTiempo(minutos) {
+  if (!minutos || minutos === 0) return "0 min";
+  if (minutos >= 60) {
+    const horas = Math.floor(minutos / 60);
+    const minutosRestantes = minutos % 60;
+    if (minutosRestantes === 0) return `${horas}h`;
+    return `${horas}h ${minutosRestantes}min`;
+  }
+  return `${minutos} min`;
+}
+
+export default function ReportesDiarios() {
   const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [err, setErr] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [fecha, setFecha] = useState(new Date().toISOString().slice(0, 10));
 
-  // Función para formatear fecha a ISO string para la API
-  const formatDateForAPI = (date) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    
-    const start = `${year}-${month}-${day}T00:00:00.000Z`;
-    const end = `${year}-${month}-${day}T23:59:59.999Z`;
-    
-    return { start, end };
-  };
-
-  // Función para obtener datos de la API
-  const fetchReporte = async (date) => {
+  const cargarDatos = useCallback(async () => {
+    setLoading(true);
+    setErr("");
     try {
-      setLoading(true);
-      setError(null);
-      
-      const { start, end } = formatDateForAPI(date);
-      const url = `https://wlserver-production.up.railway.app/api/reportes/custom?start=${start}&end=${end}`;
-      
-      const response = await fetch(url);
-      if (!response.ok) throw new Error('Error al cargar el reporte');
-      
-      const result = await response.json();
-      setData(result);
-    } catch (err) {
-      setError(err.message);
+      const res = await fetch(`/api/productividad/hoy?date=${fecha}`);
+      if (!res.ok) throw new Error(await res.text());
+      setData(await res.json());
+    } catch (e) {
+      setErr(e?.message || String(e));
     } finally {
       setLoading(false);
     }
-  };
+  }, [fecha]);
 
-  // Cargar datos cuando cambia la fecha
   useEffect(() => {
-    fetchReporte(selectedDate);
-  }, [selectedDate]);
+    cargarDatos();
+  }, [cargarDatos]);
 
-  // Manejador para cambio de fecha
-  const handleDateChange = (e) => {
-    const newDate = new Date(e.target.value + 'T12:00:00');
-    setSelectedDate(newDate);
-  };
+  // Procesar datos para gráficas
+  const procesarDatosGenerales = useCallback(() => {
+    if (!data?.users) return [];
 
-  // Función para ir al día anterior
-  const goToPreviousDay = () => {
-    const newDate = new Date(selectedDate);
-    newDate.setDate(newDate.getDate() - 1);
-    setSelectedDate(newDate);
-  };
+    const contadores = {
+      productivo: 0,
+      regular: 0,
+      no_productivo: 0,
+    };
 
-  // Función para ir al día siguiente
-  const goToNextDay = () => {
-    const newDate = new Date(selectedDate);
-    newDate.setDate(newDate.getDate() + 1);
-    setSelectedDate(newDate);
-  };
+    data.users.forEach(user => {
+      const label = user.prediccion?.label || "regular";
+      contadores[label]++;
+    });
 
-  // Función para ir a hoy
-  const goToToday = () => {
-    setSelectedDate(new Date());
-  };
+    return [
+      { name: "Productivo", count: contadores.productivo, fill: COLORS.productivo },
+      { name: "Regular", count: contadores.regular, fill: COLORS.regular },
+      { name: "No Productivo", count: contadores.no_productivo, fill: COLORS.no_productivo },
+    ].filter(item => item.count > 0);
+  }, [data]);
 
-  // Formatear fecha para el input
-  const getDateInputValue = () => {
-    const year = selectedDate.getFullYear();
-    const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
-    const day = String(selectedDate.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  };
+  const procesarPromediosUsuarios = useCallback(() => {
+    if (!data?.users) return [];
 
-  // Calcular porcentaje de completitud
-  const calcularPorcentaje = () => {
-    if (!data || data.totales.eventos === 0) return 0;
-    return Math.round((data.totales.actividadesTerminadas / data.totales.eventos) * 100);
-  };
+    return data.users
+      .sort((a, b) => (b.tiempo_total || 0) - (a.tiempo_total || 0))
+      .slice(0, 8)
+      .map(user => {
+        const label = user.prediccion?.label || "regular";
+        const productivo = label === "productivo" ? 100 : label === "regular" ? 50 : 0;
+        const regular = label === "regular" ? 100 : label === "productivo" ? 50 : 50;
+        const no_productivo = label === "no_productivo" ? 100 : label === "regular" ? 50 : 0;
 
-  if (loading) {
-    return (
-      <div className="reportes-loading">
-        <div className="loading-spinner"></div>
-        <p>Cargando reporte...</p>
-      </div>
-    );
-  }
+        return {
+          nombre: user.colaborador?.split(' ')[0] || user.user_id,
+          productivo: productivo,
+          regular: regular,
+          no_productivo: no_productivo,
+        };
+      });
+  }, [data]);
 
-  if (error) {
-    return (
-      <div className="reportes-error">
-        <div className="error-icon">⚠️</div>
-        <p className="error-message">Error: {error}</p>
-        <button onClick={() => fetchReporte(selectedDate)} className="retry-button">
-          Reintentar
-        </button>
-      </div>
-    );
-  }
+  const distribucion = procesarDatosGenerales();
+  const promedios = procesarPromediosUsuarios();
+  const usuarios = data?.users || [];
 
-  const porcentajeCompletitud = calcularPorcentaje();
-  const isToday = selectedDate.toDateString() === new Date().toDateString();
+  // Datos para gráfica de barras horizontal de usuarios
+  const datosUsuarios = usuarios
+    .sort((a, b) => (b.tiempo_total || 0) - (a.tiempo_total || 0))
+    .slice(0, 10)
+    .map(user => ({
+      nombre: user.colaborador,
+      tiempo: user.tiempo_total || 0,
+      actividades: user.actividades || 0,
+      revisiones: user.revisiones || 0,
+      estado: user.prediccion?.label || "regular",
+    }));
+
+  if (err) return <p className="error-message">{err}</p>;
+  if (!data) return <div className="loading-container"><div className="loading-spinner"></div><p>Cargando datos...</p></div>;
 
   return (
     <div className="reportes-container">
-      <div className="reportes-content">
-        {/* Header con selector de fecha */}
-        <div className="reportes-header">
-          <div className="header-top">
-            <h1 className="reportes-title">Reporte Diario</h1>
-            <div className="date-controls">
-              <button onClick={goToPreviousDay} className="nav-button" title="Día anterior">
-                ◀
-              </button>
+      <header className="reportes-header">
+        <div className="header-content">
+          <div className="header-title">
+            <h1>📊 Reporte de Productividad - Hoy</h1>
+            <p>Análisis detallado del desempeño de hoy</p>
+          </div>
+          <div className="header-controls">
+            <div className="control-group">
+              <label>Fecha:</label>
               <input
                 type="date"
-                value={getDateInputValue()}
-                onChange={handleDateChange}
+                value={fecha}
+                onChange={(e) => setFecha(e.target.value)}
                 className="date-input"
-                max={getDateInputValue()}
               />
-              <button onClick={goToNextDay} className="nav-button" title="Día siguiente" disabled={isToday}>
-                ▶
-              </button>
-              {!isToday && (
-                <button onClick={goToToday} className="today-button">
-                  Hoy
-                </button>
-              )}
             </div>
+            <button
+              onClick={cargarDatos}
+              disabled={loading}
+              className="btn-actualizar"
+            >
+              {loading ? "⏳ Cargando..." : "🔄 Actualizar"}
+            </button>
           </div>
-          <p className="reportes-date">
-            {selectedDate.toLocaleDateString('es-MX', { 
-              weekday: 'long', 
-              year: 'numeric', 
-              month: 'long', 
-              day: 'numeric' 
-            })}
-          </p>
         </div>
+      </header>
 
-        {/* Resumen general con porcentaje */}
-        <div className="reporte-summary">
-          <div className="summary-main">
-            <div className="porcentaje-section">
-              <div className="porcentaje-circle">
-                <svg viewBox="0 0 100 100" className="porcentaje-svg">
-                  <circle cx="50" cy="50" r="45" className="porcentaje-bg" />
-                  <circle 
-                    cx="50" 
-                    cy="50" 
-                    r="45" 
-                    className="porcentaje-fill"
-                    style={{
-                      strokeDasharray: `${porcentajeCompletitud * 2.827}, 282.7`
+      <div className="reportes-content">
+        {/* Sección 1: Gráficas Principales */}
+        <section className="reportes-section">
+          <div className="section-title">
+            <h2>Vista General del Día</h2>
+          </div>
+
+          <div className="graphs-grid">
+            {/* Gráfica Circular - Distribución */}
+            <div className="graph-card">
+              <h3>🎯 Distribución de Productividad</h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={distribucion}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={({ name, count }) =>
+                      `${name}: ${count} usuarios`
+                    }
+                    outerRadius={100}
+                    fill="#8884d8"
+                    dataKey="count"
+                  >
+                    {distribucion.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.fill} />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: "#1f2937",
+                      border: "1px solid #374151",
+                      borderRadius: "8px",
+                      color: "#fff",
                     }}
                   />
-                </svg>
-                <div className="porcentaje-text">
-                  <span className="porcentaje-number">{porcentajeCompletitud}%</span>
-                  <span className="porcentaje-label">Completitud</span>
-                </div>
-              </div>
+                </PieChart>
+              </ResponsiveContainer>
             </div>
-            
-            <div className="summary-stats">
-              <div className="stat-card stat-total">
-                <div className="stat-icon">📊</div>
-                <div className="stat-info">
-                  <span className="stat-value">{data.totales.eventos}</span>
-                  <span className="stat-label">Total Eventos</span>
-                </div>
-              </div>
-              
-              <div className="stat-card stat-completadas">
-                <div className="stat-icon">✅</div>
-                <div className="stat-info">
-                  <span className="stat-value">{data.totales.actividadesTerminadas}</span>
-                  <span className="stat-label">Actividades Terminadas</span>
-                </div>
-              </div>
-              
-              <div className="stat-card stat-revisiones">
-                <div className="stat-icon">👁️</div>
-                <div className="stat-info">
-                  <span className="stat-value">{data.totales.revisionesMarcadas}</span>
-                  <span className="stat-label">Revisiones Marcadas</span>
-                </div>
-              </div>
+
+            {/* Gráfica de Barras Verticales - Top Usuarios por Tiempo */}
+            <div className="graph-card">
+              <h3>⏱️ Top Usuarios por Tiempo</h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart
+                  data={datosUsuarios}
+                  layout="vertical"
+                >
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                  <XAxis type="number" tick={{ fontSize: 12 }} />
+                  <YAxis dataKey="nombre" type="category" tick={{ fontSize: 11 }} width={80} />
+                  <Tooltip
+                    formatter={(value) => formatearTiempo(value)}
+                    contentStyle={{
+                      backgroundColor: "#1f2937",
+                      border: "1px solid #374151",
+                      borderRadius: "8px",
+                      color: "#fff",
+                    }}
+                  />
+                  <Bar dataKey="tiempo" fill={COLORS.productivo} radius={[0, 8, 8, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
             </div>
           </div>
-        </div>
 
-        {/* Breakdown diario */}
-        {data.breakdownDiario && data.breakdownDiario.length > 0 && (
-          <div className="breakdown-section">
-            <h2 className="section-title">Desglose del Día</h2>
-            <div className="breakdown-grid">
-              {data.breakdownDiario.map((dia, index) => (
-                <div key={index} className="breakdown-card">
-                  <div className="breakdown-header">
-                    <h3 className="breakdown-date">
-                      {new Date(dia.date + 'T12:00:00').toLocaleDateString('es-MX', {
-                        day: 'numeric',
-                        month: 'short',
-                        year: 'numeric'
-                      })}
-                    </h3>
+          <div className="graphs-grid">
+            {/* Gráfica de Barras - Actividades y Revisiones */}
+            <div className="graph-card">
+              <h3>📋 Actividades vs Revisiones</h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={datosUsuarios}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                  <XAxis dataKey="nombre" tick={{ fontSize: 10 }} angle={-45} textAnchor="end" height={80} />
+                  <YAxis tick={{ fontSize: 12 }} />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: "#1f2937",
+                      border: "1px solid #374151",
+                      borderRadius: "8px",
+                      color: "#fff",
+                    }}
+                  />
+                  <Legend />
+                  <Bar dataKey="actividades" fill="#3b82f6" radius={[8, 8, 0, 0]} />
+                  <Bar dataKey="revisiones" fill="#8b5cf6" radius={[8, 8, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Gráfica Radar - Comparativa de Top Usuarios */}
+            <div className="graph-card">
+              <h3>⭐ Comparativa de Usuarios</h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <RadarChart data={promedios}>
+                  <PolarGrid stroke="#e5e7eb" />
+                  <PolarAngleAxis dataKey="nombre" tick={{ fontSize: 12 }} />
+                  <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fontSize: 12 }} />
+                  <Radar
+                    name="Productivo"
+                    dataKey="productivo"
+                    stroke={COLORS.productivo}
+                    fill={COLORS.productivo}
+                    fillOpacity={0.3}
+                  />
+                  <Radar
+                    name="Regular"
+                    dataKey="regular"
+                    stroke={COLORS.regular}
+                    fill={COLORS.regular}
+                    fillOpacity={0.3}
+                  />
+                  <Radar
+                    name="No Productivo"
+                    dataKey="no_productivo"
+                    stroke={COLORS.no_productivo}
+                    fill={COLORS.no_productivo}
+                    fillOpacity={0.3}
+                  />
+                  <Legend />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: "#1f2937",
+                      border: "1px solid #374151",
+                      borderRadius: "8px",
+                      color: "#fff",
+                    }}
+                  />
+                </RadarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </section>
+
+        {/* Sección 2: Estadísticas Clave */}
+        <section className="reportes-section">
+          <div className="section-title">
+            <h2>Estadísticas Clave</h2>
+          </div>
+
+          <div className="stats-grid">
+            {distribucion.length > 0 && (
+              <>
+                {distribucion.map((item) => {
+                  const total = distribucion.reduce((sum, d) => sum + d.count, 0);
+                  const porcentaje = ((item.count / total) * 100).toFixed(1);
+                  return (
+                    <div key={item.name} className="stat-card">
+                      <div className="stat-icon" style={{ backgroundColor: item.fill }}>
+                        {item.name === "Productivo" && "✓"}
+                        {item.name === "Regular" && "→"}
+                        {item.name === "No Productivo" && "✗"}
+                      </div>
+                      <div className="stat-info">
+                        <h4>{item.name}</h4>
+                        <p className="stat-value">{item.count} usuarios</p>
+                        <p className="stat-percentage">{porcentaje}%</p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </>
+            )}
+          </div>
+        </section>
+
+        {/* Sección 3: Resumen de Usuarios */}
+        <section className="reportes-section">
+          <div className="section-title">
+            <h2>Detalle de Usuarios</h2>
+          </div>
+
+          <div className="usuarios-table">
+            <div className="table-header">
+              <div className="table-cell">Usuario</div>
+              <div className="table-cell">Estado</div>
+              <div className="table-cell">Tiempo</div>
+              <div className="table-cell">Actividades</div>
+              <div className="table-cell">Revisiones</div>
+            </div>
+            {usuarios.map((user) => {
+              const estado = user.prediccion?.label || "regular";
+              const colorEstado = COLORS[estado];
+              return (
+                <div key={user.user_id} className="table-row">
+                  <div className="table-cell">
+                    <span className="user-name">{user.colaborador}</span>
                   </div>
-                  
-                  <div className="breakdown-metrics">
-                    <div className="breakdown-metric">
-                      <span className="metric-icon">📋</span>
-                      <div className="metric-data">
-                        <span className="metric-number">{dia.eventos}</span>
-                        <span className="metric-text">Eventos</span>
-                      </div>
-                    </div>
-                    
-                    <div className="breakdown-divider"></div>
-                    
-                    <div className="breakdown-metric">
-                      <span className="metric-icon">✔️</span>
-                      <div className="metric-data">
-                        <span className="metric-number">{dia.actividadesTerminadas}</span>
-                        <span className="metric-text">Terminadas</span>
-                      </div>
-                    </div>
-                    
-                    <div className="breakdown-divider"></div>
-                    
-                    <div className="breakdown-metric">
-                      <span className="metric-icon">👀</span>
-                      <div className="metric-data">
-                        <span className="metric-number">{dia.revisionesMarcadas}</span>
-                        <span className="metric-text">Revisiones</span>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="breakdown-progress">
-                    <div className="progress-bar-container">
-                      <div 
-                        className="progress-bar-fill"
-                        style={{ 
-                          width: `${dia.eventos > 0 ? (dia.actividadesTerminadas / dia.eventos) * 100 : 0}%` 
-                        }}
-                      ></div>
-                    </div>
-                    <span className="progress-text">
-                      {dia.eventos > 0 ? Math.round((dia.actividadesTerminadas / dia.eventos) * 100) : 0}% completado
+                  <div className="table-cell">
+                    <span className="badge" style={{ backgroundColor: colorEstado }}>
+                      {estado.charAt(0).toUpperCase() + estado.slice(1)}
                     </span>
                   </div>
+                  <div className="table-cell">{formatearTiempo(user.tiempo_total)}</div>
+                  <div className="table-cell">{user.actividades}</div>
+                  <div className="table-cell">{user.revisiones}</div>
                 </div>
-              ))}
-            </div>
+              );
+            })}
           </div>
-        )}
-
-        {/* Mensaje informativo si no hay datos */}
-        {data.totales.eventos === 0 && (
-          <div className="no-data-message">
-            <div className="no-data-icon">📭</div>
-            <h3>No hay eventos registrados</h3>
-            <p>No se encontraron eventos para el día seleccionado.</p>
-          </div>
-        )}
+        </section>
       </div>
     </div>
   );
-}
-
-export default ReportesDiarios;
+} 

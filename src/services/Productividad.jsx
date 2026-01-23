@@ -26,6 +26,24 @@ function prettyLabel(label) {
   );
 }
 
+// ✅ NUEVA: Función para convertir minutos a formato legible
+function formatearTiempo(minutos) {
+  if (!minutos || minutos === 0) return "0 min";
+  
+  if (minutos >= 60) {
+    const horas = Math.floor(minutos / 60);
+    const minutosRestantes = minutos % 60;
+    
+    if (minutosRestantes === 0) {
+      return `${horas}h`;
+    } else {
+      return `${horas}h ${minutosRestantes}min`;
+    }
+  }
+  
+  return `${minutos} min`;
+}
+
 export default function ProductividadCards() {
   const [data, setData] = useState(null);
   const [err, setErr] = useState("");
@@ -252,7 +270,7 @@ export default function ProductividadCards() {
                       </svg>
                     </div>
                     <div className="stat-content">
-                      <div className="stat-value">{u.tiempo_total}<span className="stat-unit">min</span></div>
+                      <div className="stat-value">{formatearTiempo(u.tiempo_total)}</div>
                       <div className="stat-label">Tiempo Total</div>
                     </div>
                   </div>
