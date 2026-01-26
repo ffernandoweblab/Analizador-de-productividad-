@@ -14,7 +14,6 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-  ComposedChart,
 } from "recharts";
 import './Prueba.css';
 
@@ -40,7 +39,7 @@ export default function Prueba() {
   const [err, setErr] = useState("");
   const [loading, setLoading] = useState(false);
   const [fechaInicio, setFechaInicio] = useState(
-    new Date(new Date().setDate(new Date().getDate() - 30)).toISOString().slice(0, 10)
+    new Date(new Date().setDate(new Date().getDate() - 5)).toISOString().slice(0, 10)
   );
   const [fechaFin, setFechaFin] = useState(
     new Date().toISOString().slice(0, 10)
@@ -52,113 +51,35 @@ export default function Prueba() {
     setLoading(true);
     setErr("");
     try {
-      // ✅ PASO 1: Generar array de fechas
-      const fechas = [];
-      const inicio = new Date(fechaInicio);
-      const fin = new Date(fechaFin);
+      console.log(`[Prueba] Cargando datos desde ${fechaInicio} hasta ${fechaFin}...`);
 
-      for (let d = new Date(inicio); d <= fin; d.setDate(d.getDate() + 1)) {
-        const fechaStr = d.toISOString().slice(0, 10);
-        fechas.push(fechaStr);
-      }
-
-      console.log(`[Prueba] Cargando ${fechas.length} días...`);
-
-      // ✅ PASO 2: Obtener REVISIONES para cada día
-      const revisionesPorDia = {};
-      const actividadesIds = new Set();
-
-      const promesasRevisiones = fechas.map(fecha =>
-        fetch(`https://wlserver-production.up.railway.app/api/reportes/revisiones-por-fecha?date=${fecha}`)
-          .then(res => res.ok ? res.json() : null)
-          .then(data => {
-            if (data?.data?.colaboradores) {
-              revisionesPorDia[fecha] = data.data.colaboradores;
-
-              // Extraer IDs de actividades
-              data.data.colaboradores.forEach(col => {
-                const acts = Array.isArray(col?.items?.actividades) ? col.items.actividades : [];
-                acts.forEach(act => {
-                  if (act?.id) actividadesIds.add(act.id);
-                });
-              });
-            }
-            return null;
-          })
-          .catch(err => {
-            console.warn(`[Prueba] Error cargando revisiones del ${fecha}:`, err);
-            return null;
-          })
+      // ✅ NUEVA FORMA: Usar la ruta /rango que aplica el mismo modelo que /hoy
+      const res = await fetch(
+        `/api/productividad/rango?start=${fechaInicio}&end=${fechaFin}`
       );
 
-      await Promise.all(promesasRevisiones);
-      console.log(`[Prueba] Se encontraron ${actividadesIds.size} actividades únicas`);
-
-      // ✅ PASO 3: Obtener ACTIVIDADES del rango completo
-      let actividadesPorId = {};
-      try {
-        const resAct = await fetch(
-          `https://wlserver-production.up.railway.app/api/actividades/fechas?fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`
-        );
-        if (resAct.ok) {
-          const dataAct = await resAct.json();
-          const acts = Array.isArray(dataAct?.data) ? dataAct.data : [];
-          acts.forEach(act => {
-            if (act?.id) {
-              actividadesPorId[act.id] = act;
-            }
-          });
-        }
-      } catch (e) {
-        console.warn("[Prueba] Error cargando actividades:", e);
+      if (!res.ok) {
+        throw new Error(`Error ${res.status}: ${await res.text()}`);
       }
 
-      // ✅ PASO 4: Consolidar datos por día y por usuario
+      const datosCompletos = await res.json();
+      console.log(`[Prueba] Datos recibidos:`, datosCompletos);
+
+      // Transformar datos al formato esperado
       const datosConsolidados = {
-        daily_data: fechas.map(fecha => {
-          const colaboradores = revisionesPorDia[fecha] || [];
-
-          return {
-            date: fecha,
-            usuarios: colaboradores.map(col => {
-              const userId = col?.idAsignee;
-              const nombreUsuario = col?.name || userId;
-
-              // Contar revisiones de este colaborador en este día
-              let revisiones = 0;
-              let minutos = 0;
-              const actividadesSet = new Set();
-
-              const acts = Array.isArray(col?.items?.actividades) ? col.items.actividades : [];
-              const buckets = ["terminadas", "confirmadas", "pendientes"];
-
-              for (const a of acts) {
-                const actId = a?.id;
-                if (!actId) continue;
-
-                actividadesSet.add(actId);
-
-                for (const b of buckets) {
-                  const revs = Array.isArray(a?.[b]) ? a[b] : [];
-                  for (const r of revs) {
-                    const dur = Number(r?.duracionMin ?? 0) || 0;
-                    revisiones += 1;
-                    if (dur > 0) minutos += dur;
-                  }
-                }
-              }
-
-              return {
-                user_id: userId,
-                colaborador: nombreUsuario,
-                actividades: actividadesSet.size,
-                revisiones,
-                tiempo_total: minutos,
-                fecha,
-              };
-            }).filter(u => u.revisiones > 0 || u.actividades > 0), // Solo usuarios con datos
-          };
-        }).filter(day => day.usuarios.length > 0), // Solo días con datos
+        daily_data: (datosCompletos.daily_data || []).map(day => ({
+          date: day.date,
+          usuarios: (day.users || []).map(user => ({
+            user_id: user.user_id,
+            colaborador: user.colaborador,
+            actividades: user.actividades,
+            revisiones: user.revisiones,
+            revisiones_con_duracion: user.revisiones_con_duracion,
+            revisiones_sin_duracion: user.revisiones_sin_duracion,
+            tiempo_total: user.tiempo_total,
+            prediccion: user.prediccion,
+          })),
+        })),
       };
 
       setData(datosConsolidados);
@@ -180,6 +101,7 @@ export default function Prueba() {
       });
 
       setUsuarios(usuariosUnicos.sort((a, b) => a.nombre.localeCompare(b.nombre)));
+      console.log(`[Prueba] Completado: ${datosConsolidados.daily_data.length} días, ${usuariosUnicos.length} colaboradores`);
     } catch (e) {
       setErr(e?.message || String(e));
       console.error("[Prueba] Error:", e);
@@ -201,12 +123,21 @@ export default function Prueba() {
       let totalActividades = 0;
       let totalTiempo = 0;
       let totalUsuarios = 0;
+      let productivos = 0;
+      let regulares = 0;
+      let noProductivos = 0;
 
       day.usuarios.forEach(user => {
-        totalRevisiones += user.revisiones;
-        totalActividades += user.actividades;
-        totalTiempo += user.tiempo_total;
+        totalRevisiones += user.revisiones || 0;
+        totalActividades += user.actividades || 0;
+        totalTiempo += user.tiempo_total || 0;
         totalUsuarios += 1;
+
+        // Contar por predicción
+        const label = user.prediccion?.label || "regular";
+        if (label === "productivo") productivos += 1;
+        else if (label === "regular") regulares += 1;
+        else if (label === "no_productivo") noProductivos += 1;
       });
 
       return {
@@ -216,6 +147,9 @@ export default function Prueba() {
         actividades: totalActividades,
         tiempo: totalTiempo,
         usuarios: totalUsuarios,
+        productivos,
+        regulares,
+        noProductivos,
       };
     });
   }, [data]);
@@ -235,6 +169,7 @@ export default function Prueba() {
           revisiones: usuario.revisiones,
           tiempo: usuario.tiempo_total,
           actividades: usuario.actividades,
+          label: usuario.prediccion?.label || "regular",
         };
       })
       .filter(Boolean);
@@ -255,12 +190,21 @@ export default function Prueba() {
             actividades_total: 0,
             tiempo_total: 0,
             dias: 0,
+            productivo: 0,
+            regular: 0,
+            no_productivo: 0,
           };
         }
-        estadisticas[user.user_id].revisiones_total += user.revisiones;
-        estadisticas[user.user_id].actividades_total += user.actividades;
-        estadisticas[user.user_id].tiempo_total += user.tiempo_total;
+        estadisticas[user.user_id].revisiones_total += user.revisiones || 0;
+        estadisticas[user.user_id].actividades_total += user.actividades || 0;
+        estadisticas[user.user_id].tiempo_total += user.tiempo_total || 0;
         estadisticas[user.user_id].dias++;
+
+        // Contar predicciones
+        const label = user.prediccion?.label || "regular";
+        if (label === "productivo") estadisticas[user.user_id].productivo++;
+        else if (label === "regular") estadisticas[user.user_id].regular++;
+        else if (label === "no_productivo") estadisticas[user.user_id].no_productivo++;
       });
     });
 
@@ -272,6 +216,7 @@ export default function Prueba() {
         revisiones: Math.round(user.revisiones_total / user.dias),
         actividades: Math.round(user.actividades_total / user.dias),
         tiempo: Math.round(user.tiempo_total / user.dias),
+        porcentajeProductivo: ((user.productivo / user.dias) * 100).toFixed(1),
       }));
   }, [data]);
 
@@ -287,8 +232,8 @@ export default function Prueba() {
       <header className="prueba-header">
         <div className="header-content">
           <div className="header-title">
-            <h1>📊 Histórico de Productividad (Prueba)</h1>
-            <p>Evolución de revisiones y actividades en el tiempo</p>
+            <h1>📊 Histórico de Productividad</h1>
+            <p>Evolución con modelo ML aplicado</p>
           </div>
           <div className="header-controls">
             <div className="control-group">
@@ -469,7 +414,7 @@ export default function Prueba() {
         {/* Sección 3: Tabla de Promedios */}
         <section className="prueba-section">
           <div className="section-title">
-            <h2>🏆 Promedios por Colaborador</h2>
+            <h2>🏆 Promedios por Colaborador (Último período)</h2>
           </div>
 
           <div className="promedios-table">
@@ -478,6 +423,7 @@ export default function Prueba() {
               <div className="table-cell">Rev. Promedio</div>
               <div className="table-cell">Act. Promedio</div>
               <div className="table-cell">Tiempo Promedio</div>
+              <div className="table-cell">% Productivo</div>
             </div>
             {promedios.map((user, idx) => (
               <div key={idx} className="table-row">
@@ -485,6 +431,11 @@ export default function Prueba() {
                 <div className="table-cell">{user.revisiones}</div>
                 <div className="table-cell">{user.actividades}</div>
                 <div className="table-cell">{formatearTiempo(user.tiempo)}</div>
+                <div className="table-cell">
+                  <span style={{ color: user.porcentajeProductivo > 50 ? COLORS.productivo : COLORS.regular }}>
+                    {user.porcentajeProductivo}%
+                  </span>
+                </div>
               </div>
             ))}
           </div>
@@ -493,13 +444,14 @@ export default function Prueba() {
         {/* Debug: Mostrar datos crudos */}
         <section className="prueba-section debug-section">
           <div className="section-title">
-            <h2>🔍 Debug - Datos Crudos</h2>
+            <h2>🔍 Debug - Datos Procesados</h2>
           </div>
           <pre className="debug-content">
             {JSON.stringify({
               dias: data?.daily_data?.length,
               usuariosUnicos: usuarios.length,
-              dataPrueba: data?.daily_data?.slice(0, 2),
+              primerDia: data?.daily_data?.[0],
+              ultimoDia: data?.daily_data?.[data.daily_data.length - 1],
             }, null, 2)}
           </pre>
         </section>

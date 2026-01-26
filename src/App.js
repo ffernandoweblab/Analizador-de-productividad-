@@ -29,8 +29,8 @@ import ReportesDiarios from './pages/ReportesDiarios';
 
 
 import ProductividadCards from './services/Productividad';
-import HistoricoProductividad from './services/HistoricoProductividad';
-import Prueba from './services/Prueba';
+// import HistoricoProductividad from './services/HistoricoProductividad';
+// import Prueba from './services/Prueba';
 function App() {
   const [activeView, setActiveView] = useState('Dashboard');
 
@@ -41,16 +41,16 @@ function App() {
 
 
 
-      case 'pruebadefecha':
-        return <Prueba />;
+      // case 'pruebadefecha':
+      //   return <Prueba />;
 
 
       case 'prediccionhoy':
         return <ProductividadCards />;
 
 
-      case 'rodrigo':
-        return <HistoricoProductividad />;
+      // case 'rodrigo':
+      //   return <HistoricoProductividad />;
 
 
       // case "predicciondiaria1":
