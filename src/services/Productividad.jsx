@@ -29,18 +29,18 @@ function prettyLabel(label) {
 // ✅ NUEVA: Función para convertir minutos a formato legible
 function formatearTiempo(minutos) {
   if (!minutos || minutos === 0) return "0 min";
-  
+
   if (minutos >= 60) {
     const horas = Math.floor(minutos / 60);
     const minutosRestantes = minutos % 60;
-    
+
     if (minutosRestantes === 0) {
       return `${horas}h`;
     } else {
       return `${horas}h ${minutosRestantes}min`;
     }
   }
-  
+
   return `${minutos} min`;
 }
 
@@ -58,7 +58,13 @@ export default function ProductividadCards() {
     setLoading(true);
     setErr("");
     try {
-      const res = await fetch(`/api/productividad/hoy?date=${fecha}`);
+      const today = new Date().toISOString().slice(0, 10);
+      const url =
+        fecha === today
+          ? `/api/productividad/hoy`
+          : `/api/productividad/hoy?date=${fecha}`;
+
+      const res = await fetch(url);
       if (!res.ok) throw new Error(await res.text());
       setData(await res.json());
     } catch (e) {
@@ -67,6 +73,7 @@ export default function ProductividadCards() {
       setLoading(false);
     }
   }, [fecha]);
+
 
   useEffect(() => {
     cargar();
@@ -208,7 +215,7 @@ export default function ProductividadCards() {
           usuarios.map((u) => {
             const prediccion = u.prediccion?.label || "regular";
             const probabilities = u.prediccion?.probabilities || {};
-            
+
             return (
               <div
                 key={u.user_id}
@@ -237,12 +244,12 @@ export default function ProductividadCards() {
                   <div className="stat-item">
                     <div className="stat-icon actividades">
                       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
-                        <path d="M15 2H9a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1z"/>
-                        <path d="M12 11h4"/>
-                        <path d="M12 16h4"/>
-                        <path d="M8 11h.01"/>
-                        <path d="M8 16h.01"/>
+                        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+                        <path d="M15 2H9a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1z" />
+                        <path d="M12 11h4" />
+                        <path d="M12 16h4" />
+                        <path d="M8 11h.01" />
+                        <path d="M8 16h.01" />
                       </svg>
                     </div>
                     <div className="stat-content">
@@ -253,8 +260,8 @@ export default function ProductividadCards() {
                   <div className="stat-item">
                     <div className="stat-icon revisiones">
                       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/>
-                        <path d="m9 12 2 2 4-4"/>
+                        <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
+                        <path d="m9 12 2 2 4-4" />
                       </svg>
                     </div>
                     <div className="stat-content">
@@ -265,8 +272,8 @@ export default function ProductividadCards() {
                   <div className="stat-item">
                     <div className="stat-icon tiempo">
                       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <circle cx="12" cy="12" r="10"/>
-                        <polyline points="12 6 12 12 16 14"/>
+                        <circle cx="12" cy="12" r="10" />
+                        <polyline points="12 6 12 12 16 14" />
                       </svg>
                     </div>
                     <div className="stat-content">
@@ -296,8 +303,8 @@ export default function ProductividadCards() {
                       No Productivo
                     </div>
                     <div className="progress-bar-container">
-                      <div 
-                        className="progress-bar no-productivo" 
+                      <div
+                        className="progress-bar no-productivo"
                         style={{ width: `${(probabilities.no_productivo || 0) * 100}%` }}
                       ></div>
                     </div>
@@ -309,8 +316,8 @@ export default function ProductividadCards() {
                       Regular
                     </div>
                     <div className="progress-bar-container">
-                      <div 
-                        className="progress-bar regular" 
+                      <div
+                        className="progress-bar regular"
                         style={{ width: `${(probabilities.regular || 0) * 100}%` }}
                       ></div>
                     </div>
@@ -322,8 +329,8 @@ export default function ProductividadCards() {
                       Productivo
                     </div>
                     <div className="progress-bar-container">
-                      <div 
-                        className="progress-bar productivo" 
+                      <div
+                        className="progress-bar productivo"
                         style={{ width: `${(probabilities.productivo || 0) * 100}%` }}
                       ></div>
                     </div>
