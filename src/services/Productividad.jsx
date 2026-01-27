@@ -278,7 +278,8 @@ export default function ProductividadCards() {
                     </div>
                     <div className="stat-content">
                       <div className="stat-value">{formatearTiempo(u.tiempo_total)}</div>
-                      <div className="stat-label">Tiempo Total</div>
+                      <div className="stat-label">
+                        Tiempo Total</div>
                     </div>
                   </div>
                 </div>
