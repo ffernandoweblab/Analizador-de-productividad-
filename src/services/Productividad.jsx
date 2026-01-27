@@ -44,6 +44,56 @@ function formatearTiempo(minutos) {
   return `${minutos} min`;
 }
 
+// ✅ COMPONENTE SKELETON LOADING (Tarjeta de carga)
+function SkeletonCard() {
+  return (
+    <div className="productividad-card skeleton-card">
+      <div className="productividad-card-header">
+        <div className="user-info">
+          <div className="user-avatar skeleton-avatar"></div>
+          <div className="skeleton-text-group">
+            <div className="skeleton-text skeleton-title"></div>
+            <div className="skeleton-text skeleton-subtitle"></div>
+          </div>
+        </div>
+        <div className="skeleton-badge"></div>
+      </div>
+
+      <div className="skeleton-text skeleton-description"></div>
+
+      <div className="productividad-card-stats">
+        <div className="stat-item">
+          <div className="stat-icon skeleton-icon"></div>
+          <div className="stat-content">
+            <div className="skeleton-text skeleton-stat-value"></div>
+            <div className="skeleton-text skeleton-stat-label"></div>
+          </div>
+        </div>
+        <div className="stat-item">
+          <div className="stat-icon skeleton-icon"></div>
+          <div className="stat-content">
+            <div className="skeleton-text skeleton-stat-value"></div>
+            <div className="skeleton-text skeleton-stat-label"></div>
+          </div>
+        </div>
+        <div className="stat-item">
+          <div className="stat-icon skeleton-icon"></div>
+          <div className="stat-content">
+            <div className="skeleton-text skeleton-stat-value"></div>
+            <div className="skeleton-text skeleton-stat-label"></div>
+          </div>
+        </div>
+      </div>
+
+      <div className="skeleton-progress">
+        <div className="skeleton-text skeleton-progress-item"></div>
+        <div className="skeleton-text skeleton-progress-item"></div>
+        <div className="skeleton-text skeleton-progress-item"></div>
+      </div>
+    </div>
+  );
+}
+
 export default function ProductividadCards() {
   const [data, setData] = useState(null);
   const [err, setErr] = useState("");
@@ -138,14 +188,15 @@ export default function ProductividadCards() {
   const counts = contadores();
 
   if (err) return <p className="error-message">{err}</p>;
-  if (!data) return <div className="loading-container"><div className="loading-spinner"></div><p>Cargando datos...</p></div>;
 
   return (
     <div className="productividad-container">
       <div className="productividad-header">
         <div className="header-title">
           <h2>Panel de Productividad</h2>
-          <p className="header-subtitle">Prediccion del dia: {data.date}</p>
+          <p className="header-subtitle">
+            {data ? `Prediccion del dia: ${data.date}` : "Cargando..."}
+          </p>
         </div>
 
         <div className="header-controls">
@@ -162,56 +213,67 @@ export default function ProductividadCards() {
       </div>
 
       {/* ✅ NUEVO: Filtros por estado */}
-      <div className="productividad-filters">
-        <button
-          className={`filter-button ${filtroEstado === "todos" ? "active" : ""}`}
-          onClick={() => setFiltroEstado("todos")}
-        >
-          Todos ({counts.todos})
-        </button>
-        <button
-          className={`filter-button productivo ${filtroEstado === "productivo" ? "active" : ""}`}
-          onClick={() => setFiltroEstado("productivo")}
-        >
-          Productivo ({counts.productivo})
-        </button>
-        <button
-          className={`filter-button regular ${filtroEstado === "regular" ? "active" : ""}`}
-          onClick={() => setFiltroEstado("regular")}
-        >
-          Regular ({counts.regular})
-        </button>
-        <button
-          className={`filter-button no-productivo ${filtroEstado === "no_productivo" ? "active" : ""}`}
-          onClick={() => setFiltroEstado("no_productivo")}
-        >
-          No productivo ({counts.no_productivo})
-        </button>
-        <button
-          className={`filter-button sin-actividad ${filtroEstado === "sin_actividad" ? "active" : ""}`}
-          onClick={() => setFiltroEstado("sin_actividad")}
-        >
-          Sin actividad ({counts.sin_actividad})
-        </button>
-      </div>
+      {data && (
+        <>
+          <div className="productividad-filters">
+            <button
+              className={`filter-button ${filtroEstado === "todos" ? "active" : ""}`}
+              onClick={() => setFiltroEstado("todos")}
+            >
+              Todos ({counts.todos})
+            </button>
+            <button
+              className={`filter-button productivo ${filtroEstado === "productivo" ? "active" : ""}`}
+              onClick={() => setFiltroEstado("productivo")}
+            >
+              Productivo ({counts.productivo})
+            </button>
+            <button
+              className={`filter-button regular ${filtroEstado === "regular" ? "active" : ""}`}
+              onClick={() => setFiltroEstado("regular")}
+            >
+              Regular ({counts.regular})
+            </button>
+            <button
+              className={`filter-button no-productivo ${filtroEstado === "no_productivo" ? "active" : ""}`}
+              onClick={() => setFiltroEstado("no_productivo")}
+            >
+              No productivo ({counts.no_productivo})
+            </button>
+            <button
+              className={`filter-button sin-actividad ${filtroEstado === "sin_actividad" ? "active" : ""}`}
+              onClick={() => setFiltroEstado("sin_actividad")}
+            >
+              Sin actividad ({counts.sin_actividad})
+            </button>
+          </div>
 
-      {/* ✅ NUEVO: Buscador */}
-      <div className="productividad-search">
-        <input
-          type="text"
-          placeholder="Buscar usuario..."
-          value={busqueda}
-          onChange={(e) => setBusqueda(e.target.value)}
-          className="search-input"
-        />
-      </div>
+          {/* ✅ NUEVO: Buscador */}
+          <div className="productividad-search">
+            <input
+              type="text"
+              placeholder="Buscar usuario..."
+              value={busqueda}
+              onChange={(e) => setBusqueda(e.target.value)}
+              className="search-input"
+            />
+          </div>
+        </>
+      )}
 
       <div className="productividad-grid">
-        {usuarios.length === 0 ? (
+        {loading ? (
+          // ✅ MOSTRAR SKELETONS MIENTRAS CARGA
+          <>
+            {Array.from({ length: 6 }).map((_, i) => (
+              <SkeletonCard key={`skeleton-${i}`} />
+            ))}
+          </>
+        ) : data && usuarios.length === 0 ? (
           <div className="no-results">
             <p>No se encontraron usuarios con los filtros seleccionados.</p>
           </div>
-        ) : (
+        ) : data ? (
           usuarios.map((u) => {
             const prediccion = u.prediccion?.label || "regular";
             const probabilities = u.prediccion?.probabilities || {};
@@ -341,7 +403,7 @@ export default function ProductividadCards() {
               </div>
             );
           })
-        )}
+        ) : null}
       </div>
     </div>
   );

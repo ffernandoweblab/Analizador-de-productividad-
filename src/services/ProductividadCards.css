@@ -74,6 +74,22 @@
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
 }
 
+/* ===== ANIMACIÓN SKELETON ===== */
+@keyframes skeleton-loading {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /* ===== CONTENEDOR PRINCIPAL ===== */
 .productividad-container {
   width: 100%;
@@ -281,6 +297,94 @@
   transition: all 0.3s ease;
 }
 
+/* ===== SKELETON CARD ===== */
+.skeleton-card {
+  border-left: 5px solid transparent !important;
+}
+
+.skeleton-text {
+  background: linear-gradient(90deg, var(--color-border) 25%, var(--color-bg-light) 50%, var(--color-border) 75%);
+  background-size: 1000px 100%;
+  animation: skeleton-loading 2s infinite;
+  border-radius: var(--radius-sm);
+  height: 1rem;
+  width: 100%;
+}
+
+.skeleton-avatar {
+  width: 48px !important;
+  height: 48px !important;
+  background: linear-gradient(90deg, var(--color-border) 25%, var(--color-bg-light) 50%, var(--color-border) 75%) !important;
+  background-size: 1000px 100% !important;
+  animation: skeleton-loading 2s infinite !important;
+  flex-shrink: 0;
+}
+
+.skeleton-title {
+  width: 40%;
+  margin-bottom: 8px;
+}
+
+.skeleton-subtitle {
+  width: 30%;
+  height: 0.75rem;
+  margin-bottom: 0;
+}
+
+.skeleton-text-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.skeleton-badge {
+  width: 80px;
+  height: 24px;
+  background: linear-gradient(90deg, var(--color-border) 25%, var(--color-bg-light) 50%, var(--color-border) 75%);
+  background-size: 1000px 100%;
+  animation: skeleton-loading 2s infinite;
+  border-radius: var(--radius-full);
+}
+
+.skeleton-description {
+  width: 100%;
+  height: 2.5rem;
+  margin: 16px 0 !important;
+}
+
+.skeleton-icon {
+  background: linear-gradient(90deg, var(--color-border) 25%, var(--color-bg-light) 50%, var(--color-border) 75%) !important;
+  background-size: 1000px 100% !important;
+  animation: skeleton-loading 2s infinite !important;
+}
+
+.skeleton-stat-value {
+  width: 60%;
+  height: 1.5rem;
+  margin: 0 auto 8px;
+}
+
+.skeleton-stat-label {
+  width: 70%;
+  height: 0.75rem;
+  margin: 0 auto;
+}
+
+.skeleton-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-border);
+}
+
+.skeleton-progress-item {
+  width: 100%;
+  height: 2rem;
+}
+
 /* ===== TARJETA PRINCIPAL ===== */
 .productividad-card {
   background: var(--color-bg-card);
@@ -336,7 +440,7 @@
   background: var(--color-no-productivo);
 }
 
-.productividad-card:hover {
+.productividad-card:hover:not(.skeleton-card) {
   transform: translateY(-4px);
   box-shadow: var(--shadow-xl);
 }
@@ -473,7 +577,7 @@
   transition: all 0.2s ease;
 }
 
-.stat-item:hover {
+.stat-item:hover:not(.skeleton-card .stat-item) {
   transform: scale(1.02);
   box-shadow: var(--shadow-sm);
 }
@@ -521,6 +625,7 @@
 
 .stat-content {
   text-align: center;
+  width: 100%;
 }
 
 .stat-value {
@@ -720,12 +825,6 @@
   border-radius: 50%;
   animation: spin 1s linear infinite;
   transition: border-color 0.3s ease;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
 }
 
 .loading-container p {
